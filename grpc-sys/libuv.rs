@@ -27,7 +27,7 @@ fn libuv_clean_compile() -> bool {
     env::var("LIBUV_SYS_CLEAN_COMPILE").is_ok()
 }
 fn download_libuv() {
-    println!("Downloading libuv...");
+    println!("Downloading libuv to {:?}...", libuv_dir());
     fs::create_dir_all(libuv_dir()).unwrap();
     Command::new("git")
         .arg("clone")
@@ -91,8 +91,8 @@ fn build_libuv() {
 
 fn get_libuv() {
     if libuv_force_fetch() {
-        fs::remove_dir_all(libuv_dir()).unwrap();
-        fs::remove_dir_all("libuv.stamp").unwrap();
+        let _ = fs::remove_dir_all(libuv_dir());
+        let _ = fs::remove_dir_all("libuv.stamp");
     }
 
     if fs::metadata("libuv.stamp").is_err() {

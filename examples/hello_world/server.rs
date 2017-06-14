@@ -47,6 +47,7 @@ fn main() {
     let service = helloworld_grpc::create_greeter(GreeterService);
     let mut server = ServerBuilder::new(env)
         .register_service(service)
+        .requests_slot_per_cq(1)
         .bind("127.0.0.1", 50051)
         .build()
         .unwrap();

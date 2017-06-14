@@ -19,12 +19,12 @@ extern crate protobuf;
 
 use std::sync::Arc;
 
-use grpc::{ChannelBuilder, EnvBuilder};
+use grpc::{ChannelBuilder, Environment};
 use grpc_proto::example::helloworld::HelloRequest;
 use grpc_proto::example::helloworld_grpc::GreeterClient;
 
 fn main() {
-    let env = Arc::new(EnvBuilder::new().build());
+    let env = Arc::new(Environment::new(1));
     let ch = ChannelBuilder::new(env).connect("localhost:50051");
     let client = GreeterClient::new(ch);
 

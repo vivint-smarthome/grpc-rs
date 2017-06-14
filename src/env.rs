@@ -15,6 +15,7 @@
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::thread::{Builder as ThreadBuilder, JoinHandle};
+use std::time::Duration;
 
 use grpc_sys;
 
@@ -24,7 +25,7 @@ use cq::{CompletionQueue, EventType};
 // event loop
 fn poll_queue(cq: Arc<CompletionQueue>) {
     loop {
-        let e = cq.next();
+        let e = cq.next_timeout(Duration::from_millis(2));
         match e.event_type {
             EventType::QueueShutdown => break,
             // timeout should not happen in theory.

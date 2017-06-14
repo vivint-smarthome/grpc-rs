@@ -128,7 +128,7 @@ impl RouteGuide for RouteGuideService {
 }
 
 fn main() {
-    let env = Arc::new(Environment::new(2));
+    let env = Arc::new(Environment::new(1));
     let instance = RouteGuideService { data: Arc::new(load_db()) };
     let service = route_guide_grpc::create_route_guide(instance);
     let mut server = ServerBuilder::new(env)

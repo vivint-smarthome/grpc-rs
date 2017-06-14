@@ -13,8 +13,9 @@
 
 
 use std::ptr;
+use std::time::Duration;
 
-use grpc_sys::{self, GprClockType, GrpcCompletionQueue};
+use grpc_sys::{self, GrpcCompletionQueue, GprTimespec};
 
 pub use grpc_sys::GrpcCompletionType as EventType;
 pub use grpc_sys::GrpcEvent as Event;
@@ -34,10 +35,17 @@ impl CompletionQueue {
 
     /// Blocks until an event is available, the completion queue is being shut down.
     pub fn next(&self) -> Event {
+        self.next_with_deadline(GprTimespec::inf_future())
+    }
+
+    fn next_with_deadline(&self, deadline: GprTimespec) -> Event {
         unsafe {
-            let inf = grpc_sys::gpr_inf_future(GprClockType::Realtime);
-            grpc_sys::grpc_completion_queue_next(self.cq, inf, ptr::null_mut())
+            grpc_sys::grpc_completion_queue_next(self.cq, deadline, ptr::null_mut())
         }
+    }
+
+    pub fn next_timeout(&self, dur: Duration) -> Event {
+        self.next_with_deadline(dur.into())
     }
 
     /// Begin destruction of a completion queue.
