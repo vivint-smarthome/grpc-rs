@@ -20,6 +20,7 @@ while read include package name; do
 	echo building $name.desc
 	find "$prefix" -name "*.proto" | xargs protoc -I "$include" -o "$rootdir/$name.desc"
 done <<EOF
+. grpc/core core
 . grpc/testing testing
 . grpc/health/v1/ health
 example example example

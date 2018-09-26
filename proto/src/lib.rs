@@ -19,6 +19,10 @@ extern crate futures;
 extern crate grpcio;
 extern crate protobuf;
 
+pub mod core {
+    include!(concat!(env!("OUT_DIR"), "/core/mod.rs"));
+}
+
 pub mod testing {
     include!(concat!(env!("OUT_DIR"), "/testing/mod.rs"));
 }
