@@ -81,6 +81,20 @@ fn build_grpc(cc: &mut Build, library: &str) {
         if env::var("CARGO_CFG_TARGET_ENV").unwrap_or("".to_owned()) == "musl" {
             config.define("CMAKE_CXX_COMPILER", "g++");
         }
+        // if HOST != TARGET we're cross-compiling
+        if env::var("HOST").expect("env HOST must be set") != env::var("TARGET").expect("env TARGET must be set") {
+            config.define("CMAKE_CROSSCOMPILING", "true");
+        }
+        // allow arbitrary environment variables to affect cmake to help with cross-compiling
+        let define_prepend = "GRPCIO_SYS_CMAKE_DEFINE_";
+        for (k, v) in env::vars() {
+            if k.starts_with(define_prepend) {
+                let key = k.replace(define_prepend, "");
+                println!("defining {}={}", key, v);
+                println!("cargo:rerun-if-env-changed:{}", k);
+                config.define(key, v);
+            }
+        }
         // We don't need to generate install targets.
         config.define("gRPC_INSTALL", "false");
         // We don't need to build csharp target.
