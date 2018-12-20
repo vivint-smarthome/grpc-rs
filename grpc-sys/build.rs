@@ -100,12 +100,14 @@ fn build_grpc(cc: &mut Build, library: &str) {
 
     let mut zlib = "z";
     let build_dir = format!("{}/build", dst.display());
-    let third_party = vec![
+    let mut third_party = vec![
         "cares/cares/lib",
         "zlib",
-        "boringssl/ssl",
-        "boringssl/crypto",
     ];
+    if cfg!(feature = "secure") && !cfg!(feature = "openssl") {
+        third_party.push("boringssl/ssl");
+        third_party.push("boringssl/crypto");
+    }
     if get_env("CARGO_CFG_TARGET_OS").map_or(false, |s| s == "windows") {
         let profile = match &*env::var("PROFILE").unwrap_or("debug".to_owned()) {
             "bench" | "release" => {
