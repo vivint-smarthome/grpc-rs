@@ -91,7 +91,7 @@ fn build_grpc(cc: &mut Build, library: &str) {
             if k.starts_with(define_prepend) {
                 let key = k.replace(define_prepend, "");
                 println!("defining {}={}", key, v);
-                println!("cargo:rerun-if-env-changed:{}", k);
+                println!("cargo:rerun-if-env-changed={}", k);
                 config.define(key, v);
             }
         }
